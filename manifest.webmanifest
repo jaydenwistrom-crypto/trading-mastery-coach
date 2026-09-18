@@ -1,0 +1,18 @@
+{
+  "name": "Trading Mastery Coach",
+  "short_name": "Mastery Coach",
+  "description": "Evidence-backed futures study and active recall.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080c10",
+  "theme_color": "#0b1117",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

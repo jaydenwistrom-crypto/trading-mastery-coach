@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1117" />
+    <meta
+      name="description"
+      content="A private-by-default futures study coach built from verified TradingPhantoms notes."
+    />
+    <title>Trading Mastery Coach</title>
+    <link rel="manifest" href="./manifest.webmanifest?v=2" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to lesson</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Study navigation">
+        <a class="brand" href="#today" aria-label="Trading Mastery Coach home">
+          <span class="brand-mark" aria-hidden="true">TM</span>
+          <span><strong>Trading Mastery</strong><small>Futures cycle</small></span>
+        </a>
+
+        <nav class="nav-list">
+          <button class="nav-item active" data-view="today" type="button">
+            <span aria-hidden="true">◫</span> Today
+          </button>
+          <button class="nav-item" data-view="learn" type="button">
+            <span aria-hidden="true">◇</span> Learn
+          </button>
+          <button class="nav-item" data-view="practice" type="button">
+            <span aria-hidden="true">↗</span> Practice
+          </button>
+          <button class="nav-item" data-view="mistakes" type="button">
+            <span aria-hidden="true">!</span> Mistake book
+          </button>
+          <button class="nav-item" data-view="mastery" type="button">
+            <span aria-hidden="true">◎</span> Mastery map
+          </button>
+          <button class="nav-item" data-view="evidence" type="button">
+            <span aria-hidden="true">▤</span> Evidence
+          </button>
+        </nav>
+
+        <div class="privacy-note">
+          <span class="privacy-dot" aria-hidden="true"></span>
+          <div><strong>Device-local progress</strong><small>Your answers stay in this browser.</small></div>
+        </div>
+      </aside>
+
+      <main id="main" tabindex="-1">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">TradePhantoms · Futures Focus</p>
+            <h1 id="page-title">Today’s study</h1>
+          </div>
+          <div class="top-actions">
+            <button id="install-button" class="button button-ghost hidden" type="button">Install app</button>
+            <a
+              class="button button-ghost"
+              href="https://tradephantoms-s-site.thinkific.com/courses/take/copy-of-tradephantoms-forex-focus-course/lessons/66586089-tradephantoms-futures-focus-part-i"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Open lesson ↗</a>
+          </div>
+        </header>
+
+        <section id="view-root" class="view" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <template id="today-template">
+      <div class="today-grid">
+        <section class="focus-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="status-chip confirmed">CURRENT · PART I</span>
+              <h2>Read a futures contract symbol</h2>
+              <p>Learn the three parts of a dated symbol before moving to rollover or chart selection.</p>
+            </div>
+            <div class="progress-ring" role="img" aria-label="Course mastery progress">
+              <span id="progress-number">0%</span>
+            </div>
+          </div>
+
+          <div class="session-plan" aria-label="Today's session plan">
+            <div class="plan-step active"><span>01</span><div><strong>Recall</strong><small>3 questions · 3 min</small></div></div>
+            <div class="plan-step"><span>02</span><div><strong>Learn</strong><small>Symbol anatomy · 7 min</small></div></div>
+            <div class="plan-step"><span>03</span><div><strong>Compare</strong><small>Valid vs near-miss · 5 min</small></div></div>
+            <div class="plan-step"><span>04</span><div><strong>Teach back</strong><small>Explain without notes · 5 min</small></div></div>
+          </div>
+
+          <button class="button button-primary" data-action="start-learning" type="button">Start recall</button>
+        </section>
+
+        <section class="side-stack">
+          <article class="metric-card">
+            <span class="metric-label">Due for review</span>
+            <strong class="metric-value" id="due-count">3</strong>
+            <span class="metric-foot">Short recall, not a replay</span>
+          </article>
+          <article class="boundary-card">
+            <span class="status-chip not-shown">BOUNDARY</span>
+            <h3>Part I is not a strategy</h3>
+            <p>No entry, stop, target, or position-sizing rule has been confirmed in this lesson.</p>
+          </article>
+          <article class="source-card">
+            <span class="metric-label">Evidence status</span>
+            <div class="source-row"><span class="evidence-dot confirmed-dot"></span><span>Written notes reviewed</span></div>
+            <div class="source-row"><span class="evidence-dot unknown-dot"></span><span>Video timestamps pending</span></div>
+          </article>
+        </section>
+      </div>
+    </template>
+
+    <template id="learn-template">
+      <div class="lesson-layout">
+        <section class="lesson-card">
+          <div class="lesson-meta"><span>CONCEPT 1 OF 6</span><span>~7 MIN</span></div>
+          <h2>Anatomy of a dated futures symbol</h2>
+          <p class="lesson-lead">A dated symbol answers three questions: <strong>what</strong> is traded, <strong>which contract month</strong>, and <strong>which year</strong>.</p>
+
+          <div class="symbol-demo" aria-label="GCQ23 symbol breakdown">
+            <div><strong>GC</strong><span>Gold root</span></div>
+            <div><strong>Q</strong><span>August</span></div>
+            <div><strong>23</strong><span>2023</span></div>
+          </div>
+
+          <div class="compare-grid">
+            <article class="example good-example">
+              <span class="example-label">WORKED EXAMPLE</span>
+              <strong>GCQ23</strong>
+              <p>Gold contract for August 2023. All three required pieces are visible.</p>
+            </article>
+            <article class="example near-miss">
+              <span class="example-label">NEAR-MISS</span>
+              <strong>GC23</strong>
+              <p>The root and year are visible, but the contract-month code is missing.</p>
+            </article>
+          </div>
+
+          <div class="knowledge-check">
+            <span class="example-label">CHECK YOURSELF</span>
+            <h3>What does the <em>Q</em> communicate in GCQ23?</h3>
+            <div class="answer-options" role="group" aria-label="Answer choices">
+              <button type="button" data-answer="wrong">The exchange</button>
+              <button type="button" data-answer="correct">The August contract month</button>
+              <button type="button" data-answer="wrong">The tick value</button>
+            </div>
+            <p id="answer-feedback" class="answer-feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="lesson-actions">
+            <button class="button button-ghost" data-action="back-today" type="button">← Today</button>
+            <button class="button button-primary" data-action="complete-concept" type="button" disabled>Mark concept understood</button>
+          </div>
+        </section>
+
+        <aside class="lesson-rail">
+          <h3>Mastery gate</h3>
+          <ul>
+            <li>Explain all three symbol parts.</li>
+            <li>Decode two varied examples.</li>
+            <li>Reject an incomplete symbol.</li>
+            <li>Name what remains unknown.</li>
+          </ul>
+          <div class="source-proof">
+            <span class="status-chip confirmed">CONFIRMED</span>
+            <p>Supported by the Part I written class notes, pages 13–14.</p>
+          </div>
+        </aside>
+      </div>
+    </template>
+
+    <script src="./app.js?v=2" defer></script>
+  </body>
+</html>
