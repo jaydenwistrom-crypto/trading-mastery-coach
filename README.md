@@ -17,4 +17,7 @@ The deployed app contains no paid course video, source PDF, private transcript, 
 
 ## Publishing
 
-The tracked static application is in `dist/`. The GitHub Pages workflow publishes only that directory.
+The tracked static application is in `dist/`. The protected trading library stays private; public-safe app releases are published separately at:
+
+- App: https://jaydenwistrom-crypto.github.io/trading-mastery-coach/
+- Public app repository: https://github.com/jaydenwistrom-crypto/trading-mastery-coach
