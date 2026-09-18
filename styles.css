@@ -254,9 +254,13 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 .practice-options { display: grid; gap: .7rem; }
 .practice-options button { display: flex; align-items: center; gap: .9rem; min-height: 62px; padding: .8rem 1rem; border: 1px solid var(--line-bright); border-radius: 12px; background: rgba(8, 12, 16, .5); color: var(--text); text-align: left; cursor: pointer; }
 .practice-options button:hover, .practice-options button:focus-visible { border-color: var(--blue); outline: none; }
+.practice-options button:disabled { cursor: default; opacity: .72; }
+.practice-options button:disabled:hover { border-color: var(--line-bright); }
 .practice-options button span { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border: 1px solid var(--line-bright); border-radius: 8px; color: var(--muted); font-size: .78rem; font-weight: 800; }
 .practice-options button.correct { border-color: var(--green); background: rgba(113, 214, 166, .1); }
 .practice-options button.wrong { border-color: var(--red); background: rgba(255, 126, 120, .1); }
+.practice-options button.correct:disabled:hover { border-color: var(--green); }
+.practice-options button.wrong:disabled:hover { border-color: var(--red); }
 .practice-feedback { min-height: 64px; margin-top: 1rem; }
 .practice-feedback strong, .practice-feedback span { display: block; }
 .practice-feedback strong { color: var(--blue); }

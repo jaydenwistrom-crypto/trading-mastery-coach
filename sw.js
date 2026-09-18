@@ -1,5 +1,5 @@
-const CACHE_NAME = "trading-mastery-coach-v2";
-const APP_SHELL = ["./", "./index.html", "./styles.css?v=2", "./app.js?v=2", "./manifest.webmanifest?v=2", "./favicon.svg"];
+const CACHE_NAME = "trading-mastery-coach-v3";
+const APP_SHELL = ["./", "./index.html", "./styles.css?v=3", "./app.js?v=3", "./manifest.webmanifest?v=3", "./favicon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));

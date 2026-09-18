@@ -8,7 +8,8 @@ Current scope:
 - one worked symbol-anatomy lesson with a controlled near-miss
 - active-recall questions across all confirmed Part I topics
 - device-local review scheduling and mistake tracking
-- mastery status based on repeated performance, not video completion
+- mastery status based on two different correctly answered examples, not repetition or video completion
+- mistakes that clear only after the missed question is answered correctly
 - evidence labels and links to the public source record
 
 ## Privacy boundary
