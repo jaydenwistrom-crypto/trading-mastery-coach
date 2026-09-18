@@ -468,7 +468,7 @@ function registerWebMcpTools() {
   });
 }
 
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=3").catch(() => {}));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4").catch(() => {}));
 
 window.addEventListener("hashchange", () => {
   const requestedView = window.location.hash.slice(1);
