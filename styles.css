@@ -185,6 +185,7 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 .progress-ring span { font-weight: 850; font-size: 1.05rem; }
 
 .session-plan { display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem; margin: auto 0 1.5rem; }
+.today-secondary { align-self: flex-start; margin-top: .6rem; }
 .plan-step { min-height: 128px; padding: 1rem; border: 1px solid var(--line); border-radius: 13px; background: rgba(8, 12, 16, .36); }
 .plan-step > span { color: var(--muted); font-size: .72rem; font-weight: 800; }
 .plan-step strong, .plan-step small { display: block; }
@@ -244,6 +245,24 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 .lesson-rail li + li { margin-top: .55rem; }
 .source-proof { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .source-proof p { color: var(--muted); font-size: .82rem; line-height: 1.55; }
+.source-proof a { color: var(--blue); }
+
+.risk-calculator { margin-top: 1.4rem; padding: 1.4rem; border: 1px solid var(--blue); border-radius: 15px; background: var(--blue-soft); }
+.risk-calculator h3 { margin: 0 0 .5rem; }
+.risk-calculator p { color: var(--muted); line-height: 1.5; }
+.risk-inputs { display: flex; flex-wrap: wrap; gap: .8rem; margin: 1rem 0; }
+.risk-inputs label { display: grid; gap: .4rem; flex: 1 1 190px; color: var(--text); font-size: .84rem; }
+.risk-inputs input { width: 100%; min-height: 44px; padding: .65rem; border: 1px solid var(--line-bright); border-radius: 9px; background: #0b1218; color: var(--text); font: inherit; }
+.risk-inputs input:focus-visible { outline: 3px solid rgba(92, 184, 255, .35); }
+.risk-calculator output { display: block; min-height: 3rem; padding: .8rem; border-radius: 9px; background: #0b1218; color: var(--green); font-weight: 700; }
+.risk-calculator .risk-caveat { margin-bottom: 0; color: var(--amber); font-size: .82rem; }
+.order-checklist { display: grid; gap: .65rem; }
+.order-checklist > p { margin: 0 0 .25rem; }
+.order-checklist label { display: flex; align-items: flex-start; gap: .65rem; padding: .72rem; border: 1px solid var(--line); border-radius: 9px; background: rgba(8, 12, 16, .45); line-height: 1.4; cursor: pointer; }
+.order-checklist input { flex: 0 0 auto; width: 1.1rem; height: 1.1rem; margin-top: .12rem; accent-color: var(--blue); }
+.order-checklist output { margin-top: .25rem; }
+.order-warning { margin: 1.4rem 0 0; padding: 1rem; border: 1px solid var(--amber); border-radius: 12px; background: rgba(255, 184, 92, .07); }
+.order-warning p { margin-bottom: 0; }
 
 .practice-layout, .evidence-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 1rem; align-items: start; }
 .practice-card, .workspace-panel { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(21, 30, 39, .98), rgba(13, 19, 25, .98)); }
@@ -312,7 +331,7 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { position: fixed; z-index: 30; top: auto; bottom: 0; width: 100%; height: auto; padding: .55rem; border: 0; border-top: 1px solid var(--line); }
   .brand, .privacy-note { display: none; }
-  .nav-list { grid-template-columns: repeat(6, 1fr); gap: .2rem; margin: 0; }
+  .nav-list { grid-template-columns: repeat(8, minmax(68px, 1fr)); gap: .2rem; margin: 0; overflow-x: auto; }
   .nav-item { flex-direction: column; gap: .18rem; padding: .5rem .2rem; font-size: .66rem; text-align: center; }
   .nav-item span { font-size: .9rem; }
   main { padding-bottom: 6.5rem; }

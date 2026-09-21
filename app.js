@@ -14,6 +14,8 @@ const concepts = [
   { id: "contracts-ticks", title: "Contracts and ticks", source: "Page 22" },
   { id: "expiry-settlement", title: "Expiration and settlement", source: "Page 22" },
   { id: "strategy-boundary", title: "Evidence boundary", source: "Pages 1–23" },
+  { id: "mes-risk", title: "MES risk arithmetic", source: "CME contract specifications", available: true },
+  { id: "order-safety", title: "Order and position safety", source: "CME order-type education", available: true },
 ];
 
 const practiceQuestions = [
@@ -113,6 +115,62 @@ const practiceQuestions = [
     answer: 1,
     explanation: "No verified win rate, backtest, or live-performance record is documented in the Part I written notes.",
   },
+  {
+    id: "mes-tick",
+    concept: "mes-risk",
+    prompt: "For one MES futures contract, what is one 0.25-point tick worth?",
+    options: ["$1.25", "$5", "$12.50"],
+    answer: 0,
+    explanation: "CME lists MES at $5 per index point, so 0.25 point is $1.25 per contract.",
+  },
+  {
+    id: "mes-stop-math",
+    concept: "mes-risk",
+    prompt: "In a practice example, one MES contract has a 10-point entry-to-stop distance. What is the planned price-move loss before costs or slippage?",
+    options: ["$12.50", "$50", "$500"],
+    answer: 1,
+    explanation: "10 index points × $5 per point × 1 contract = $50 before fees and possible slippage. A stop is not a guaranteed fill price.",
+  },
+  {
+    id: "mes-two-contracts",
+    concept: "mes-risk",
+    prompt: "In that same 10-point practice example, what changes if the position is two MES contracts?",
+    options: ["The planned price-move loss doubles to $100", "The tick size doubles", "The risk stays $50"],
+    answer: 0,
+    explanation: "The contract's tick size does not change. The planned price-move loss is 10 × $5 × 2 = $100 before costs or slippage.",
+  },
+  {
+    id: "sell-while-long",
+    concept: "order-safety",
+    prompt: "You are long 1 contract. What does a filled Sell 1 normally do?",
+    options: ["Closes the long and returns the position to flat", "Adds another long", "Guarantees a profit"],
+    answer: 0,
+    explanation: "A filled sell offsets one long contract. Always verify the resulting position quantity; an extra sell after flat can open a short.",
+  },
+  {
+    id: "sell-while-flat",
+    concept: "order-safety",
+    prompt: "You are flat. What can a filled Sell 1 market order do?",
+    options: ["Nothing", "Open a short position", "Create a stop automatically"],
+    answer: 1,
+    explanation: "When flat, a filled sell can establish a short position. The word Sell does not always mean ‘close.’ Position state matters.",
+  },
+  {
+    id: "stop-working",
+    concept: "order-safety",
+    prompt: "Which evidence best confirms a long position actually has stop protection?",
+    options: ["A stop value typed into a form", "A working Sell Stop for the correct quantity below the market", "The trade currently shows a profit"],
+    answer: 1,
+    explanation: "Typed values are not protection until the order is submitted and accepted. Confirm side, type, quantity, price, and Working status.",
+  },
+  {
+    id: "market-order",
+    concept: "order-safety",
+    prompt: "What does a market order prioritize?",
+    options: ["Execution, not a guaranteed price", "A guaranteed fill price", "Automatic loss protection"],
+    answer: 0,
+    explanation: "A market order seeks immediate execution, but the exact fill price can differ—especially in fast or thin markets.",
+  },
 ];
 
 function loadState() {
@@ -122,6 +180,7 @@ function loadState() {
       attempts: Number(stats?.attempts) || 0,
       correct: Number(stats?.correct) || 0,
       correctQuestionIds: Array.from(new Set(Array.isArray(stats?.correctQuestionIds) ? stats.correctQuestionIds : [])),
+      correctDays: Array.from(new Set(Array.isArray(stats?.correctDays) ? stats.correctDays : [])),
     }]));
     return {
       ...defaultState,
@@ -150,6 +209,8 @@ const pageTitle = document.querySelector("#page-title");
 const titles = {
   today: "Today’s study",
   learn: "Learn",
+  risk: "MES risk lab",
+  orders: "Order safety lab",
   practice: "Practice",
   mistakes: "Mistake book",
   mastery: "Mastery map",
@@ -163,6 +224,9 @@ function cloneTemplate(id) {
 function setView(view, updateHash = true) {
   currentView = view;
   pageTitle.textContent = titles[view] || titles.today;
+  const isCmeLab = view === "risk" || view === "orders";
+  document.querySelector("#course-eyebrow").textContent = isCmeLab ? "CME · Futures safety education" : "TradePhantoms · Futures Focus";
+  document.querySelector("#course-link").classList.toggle("hidden", isCmeLab);
   document.querySelectorAll(".nav-item").forEach((item) => {
     const active = item.dataset.view === view;
     item.classList.toggle("active", active);
@@ -172,6 +236,8 @@ function setView(view, updateHash = true) {
 
   viewRoot.replaceChildren();
   if (view === "learn") renderLearn();
+  else if (view === "risk") renderRisk();
+  else if (view === "orders") renderOrders();
   else if (view === "practice") renderPractice();
   else if (view === "mistakes") renderMistakes();
   else if (view === "mastery") renderMastery();
@@ -188,24 +254,29 @@ function renderToday() {
   content.querySelector("#progress-number").textContent = `${percent}%`;
   content.querySelector(".progress-ring").style.background =
     `radial-gradient(circle closest-side, var(--panel-2) 77%, transparent 79% 100%), conic-gradient(var(--blue) ${percent}%, var(--line) 0)`;
-  content.querySelector("#due-count").textContent = String(getDueReviewCount());
-  content.querySelector('[data-action="start-learning"]').addEventListener("click", () => setView("practice"));
+  const due = getDueReviewCount();
+  const openMistakes = state.mistakes.filter((item) => !item.resolved).length;
+  content.querySelector("#due-count").textContent = String(due);
+  content.querySelector("#today-focus").textContent = due ? "Review what is due" : openMistakes ? "Repair a missed question" : "Build futures foundations";
+  content.querySelector("#today-description").textContent = due
+    ? `${due} concept${due === 1 ? " is" : "s are"} due. Recall first, then check the explanation.`
+    : openMistakes ? `${openMistakes} correction${openMistakes === 1 ? " needs" : "s need"} another attempt.`
+      : "Practice a new concept or use the MES risk lab to work through contract-size math.";
+  content.querySelector('[data-action="start-learning"]').addEventListener("click", () => startPractice());
+  content.querySelector('[data-action="open-risk"]').addEventListener("click", () => setView("risk"));
   viewRoot.append(content);
 }
 
 function conceptStatus(conceptId) {
   if (state.mistakes.some((item) => item.conceptId === conceptId && !item.resolved)) return "NEEDS REVIEW";
   const stats = state.reviewStats[conceptId] || { correct: 0, attempts: 0, correctQuestionIds: [] };
-  if ((stats.correctQuestionIds || []).length >= 2) return "MASTERED";
+  if ((stats.correctQuestionIds || []).length >= 2 && (stats.correctDays || []).length >= 2) return "MASTERED";
   if (state.completedConcepts.includes(conceptId) || stats.attempts > 0) return "LEARNING";
   return "NOT STARTED";
 }
 
 function getDueReviewCount() {
-  const dueNow = state.reviews.filter((review) => review.due <= Date.now()).length;
-  if (dueNow > 0) return dueNow;
-  const practicedConcepts = Object.values(state.reviewStats).filter((stats) => stats.attempts > 0).length;
-  return Math.max(3 - practicedConcepts, 0);
+  return state.reviews.filter((review) => review.due <= Date.now()).length;
 }
 
 function scheduleReview(conceptId, rating) {
@@ -217,10 +288,13 @@ function scheduleReview(conceptId, rating) {
 function recordAnswer(question, correct) {
   const stats = state.reviewStats[question.concept] || { correct: 0, attempts: 0, correctQuestionIds: [] };
   if (!Array.isArray(stats.correctQuestionIds)) stats.correctQuestionIds = [];
+  if (!Array.isArray(stats.correctDays)) stats.correctDays = [];
   stats.attempts += 1;
   if (correct) {
     stats.correct += 1;
     if (!stats.correctQuestionIds.includes(question.id)) stats.correctQuestionIds.push(question.id);
+    const today = new Date().toLocaleDateString("en-CA");
+    if (!stats.correctDays.includes(today)) stats.correctDays.push(today);
     state.mistakes
       .filter((item) => item.questionId === question.id && !item.resolved)
       .forEach((item) => { item.resolved = true; });
@@ -280,30 +354,53 @@ function renderLearn() {
 }
 
 let practiceIndex = 0;
+let practiceTargetIndex = null;
+let lastPracticeQuestionId = null;
+
+function choosePracticeIndex(excludeId = null) {
+  const dueConcepts = state.reviews.filter((item) => item.due <= Date.now()).sort((a, b) => a.due - b.due).map((item) => item.concept);
+  const openMistakes = state.mistakes.filter((item) => !item.resolved).map((item) => item.questionId);
+  const ranked = practiceQuestions.map((question, index) => {
+    const stats = state.reviewStats[question.concept] || {};
+    const priority = dueConcepts.includes(question.concept) ? 0
+      : openMistakes.includes(question.id) ? 1
+        : !stats.attempts ? 2
+          : !(stats.correctQuestionIds || []).includes(question.id) ? 3 : 4;
+    return { index, id: question.id, priority, rotation: (index - practiceIndex + practiceQuestions.length) % practiceQuestions.length };
+  }).sort((a, b) => a.priority - b.priority || a.rotation - b.rotation);
+  return (ranked.find((item) => item.id !== excludeId) || ranked[0]).index;
+}
+
+function startPractice(targetIndex = null) {
+  practiceTargetIndex = targetIndex;
+  setView("practice");
+}
 
 function renderPractice() {
-  const question = practiceQuestions[practiceIndex % practiceQuestions.length];
+  practiceIndex = practiceTargetIndex ?? choosePracticeIndex(lastPracticeQuestionId);
+  practiceTargetIndex = null;
+  const question = practiceQuestions[practiceIndex];
+  const isCme = question.concept === "mes-risk" || question.concept === "order-safety";
   viewRoot.innerHTML = `
     <div class="practice-layout">
       <section class="practice-card">
-        <div class="lesson-meta"><span>ACTIVE RECALL</span><span>${practiceIndex + 1} / ${practiceQuestions.length}</span></div>
-        <div class="practice-progress" aria-hidden="true"><span style="width:${((practiceIndex + 1) / practiceQuestions.length) * 100}%"></span></div>
-        <span class="status-chip confirmed">CONFIRMED MATERIAL</span>
+        <div class="lesson-meta"><span>ACTIVE RECALL</span><span>${concepts.find((item) => item.id === question.concept)?.title || "Futures foundations"}</span></div>
+        <span class="status-chip confirmed">${isCme ? "CME-SOURCED EDUCATION" : "PART I NOTES"}</span>
         <h2>${question.prompt}</h2>
         <div class="practice-options" role="group" aria-label="Answer choices">
           ${question.options.map((option, index) => `<button type="button" data-option="${index}"><span>${String.fromCharCode(65 + index)}</span>${option}</button>`).join("")}
         </div>
         <div class="practice-feedback" aria-live="polite"></div>
         <div class="practice-actions hidden">
-          <button class="button button-ghost" type="button" data-rating="again">Again · 10 min</button>
           <button class="button button-ghost" type="button" data-rating="hard">Hard · tomorrow</button>
           <button class="button button-primary" type="button" data-rating="good">Good · 3 days</button>
+          <button class="button button-primary hidden" type="button" data-next>Next question →</button>
         </div>
       </section>
       <aside class="lesson-rail">
         <h3>How to answer</h3>
         <p class="rail-copy">Commit to an answer before checking. Effortful retrieval strengthens memory more than rereading the note.</p>
-        <div class="source-proof"><span class="status-chip not-shown">NO GUESSING</span><p>If the source does not establish the answer, the correct response is UNKNOWN.</p></div>
+        <div class="source-proof"><span class="status-chip not-shown">NO GUESSING</span><p>${isCme ? "This is public futures-safety education, not a TradePhantoms entry system. Practice the mechanics in Replay before risking money." : "If the Part I notes do not establish an answer, the correct response is UNKNOWN."}</p></div>
       </aside>
     </div>`;
 
@@ -322,15 +419,26 @@ function renderPractice() {
       feedback.innerHTML = `<strong>${answeredCorrectly ? "Correct." : "Repair this one."}</strong><span>${question.explanation}</span>`;
       actions.classList.remove("hidden");
       recordAnswer(question, answeredCorrectly);
+      if (!answeredCorrectly) {
+        actions.querySelectorAll("[data-rating]").forEach((item) => item.classList.add("hidden"));
+        actions.querySelector("[data-next]").classList.remove("hidden");
+      }
     });
   });
+
+  function advance() {
+    lastPracticeQuestionId = question.id;
+    practiceIndex = (practiceIndex + 1) % practiceQuestions.length;
+    renderPractice();
+  }
+
+  actions.querySelector("[data-next]").addEventListener("click", advance);
 
   actions.querySelectorAll("[data-rating]").forEach((button) => {
     button.addEventListener("click", () => {
       scheduleReview(question.concept, button.dataset.rating);
       saveState();
-      practiceIndex = (practiceIndex + 1) % practiceQuestions.length;
-      renderPractice();
+      advance();
     });
   });
 }
@@ -353,18 +461,17 @@ function renderMistakes() {
   viewRoot.querySelectorAll("[data-review-question]").forEach((button) => {
     button.addEventListener("click", () => {
       const targetIndex = practiceQuestions.findIndex((question) => question.id === button.dataset.reviewQuestion);
-      if (targetIndex >= 0) practiceIndex = targetIndex;
-      setView("practice");
+      startPractice(targetIndex >= 0 ? targetIndex : null);
     });
   });
-  viewRoot.querySelector("[data-go-practice]")?.addEventListener("click", () => setView("practice"));
+  viewRoot.querySelector("[data-go-practice]")?.addEventListener("click", () => startPractice());
 }
 
 function renderMastery() {
   const mastered = concepts.filter((concept) => conceptStatus(concept.id) === "MASTERED").length;
   viewRoot.innerHTML = `
     <section class="workspace-panel">
-      <div class="workspace-heading"><div><span class="eyebrow">PART I · FOUNDATIONS</span><h2>Mastery map</h2><p>Completion is not mastery. A concept moves forward only after explanation, varied application, and correction.</p></div><strong>${mastered}/${concepts.length}</strong></div>
+      <div class="workspace-heading"><div><span class="eyebrow">FUTURES FOUNDATIONS · CME LAB</span><h2>Mastery map</h2><p>Completion is not mastery. Mastery requires two varied correct answers on different days, with no open correction for that concept.</p></div><strong>${mastered}/${concepts.length}</strong></div>
       <div class="mastery-grid">
         ${concepts.map((concept, index) => {
           const status = conceptStatus(concept.id);
@@ -373,18 +480,117 @@ function renderMastery() {
             <span class="mastery-status">${status}</span>
             <h3>${concept.title}</h3>
             <p>${concept.source}</p>
-            ${concept.available ? `<button class="text-button" type="button" data-open-learn>Open lesson →</button>` : `<button class="text-button" type="button" data-open-practice>Practice concept →</button>`}
+            ${concept.available ? `<button class="text-button" type="button" data-open-learn="${concept.id}">Open lesson →</button>` : `<button class="text-button" type="button" data-open-practice="${concept.id}">Practice concept →</button>`}
           </article>`;
         }).join("")}
       </div>
     </section>`;
-  viewRoot.querySelector("[data-open-learn]")?.addEventListener("click", () => setView("learn"));
-  viewRoot.querySelectorAll("[data-open-practice]").forEach((button, index) => button.addEventListener("click", () => {
-    const conceptId = concepts.filter((concept) => !concept.available)[index]?.id;
-    const targetIndex = practiceQuestions.findIndex((question) => question.concept === conceptId);
-    if (targetIndex >= 0) practiceIndex = targetIndex;
-    setView("practice");
+  viewRoot.querySelectorAll("[data-open-learn]").forEach((button) => button.addEventListener("click", () => {
+    const destination = button.dataset.openLearn === "mes-risk" ? "risk" : button.dataset.openLearn === "order-safety" ? "orders" : "learn";
+    setView(destination);
   }));
+  viewRoot.querySelectorAll("[data-open-practice]").forEach((button) => button.addEventListener("click", () => {
+    const conceptId = button.dataset.openPractice;
+    const targetIndex = practiceQuestions.findIndex((question) => question.concept === conceptId);
+    startPractice(targetIndex >= 0 ? targetIndex : null);
+  }));
+}
+
+function renderRisk() {
+  viewRoot.innerHTML = `
+    <div class="lesson-layout">
+      <section class="lesson-card">
+        <div class="lesson-meta"><span>FUTURES SAFETY · PUBLIC CME SOURCE</span><span>SIMULATION ONLY</span></div>
+        <h2>Know the dollars before the click</h2>
+        <p class="lesson-lead">MES is worth <strong>$5 per index point per contract</strong>. Its minimum 0.25-point tick is <strong>$1.25</strong>. This is contract arithmetic, not an entry signal or a stop-placement rule.</p>
+        <div class="compare-grid">
+          <article class="example good-example"><span class="example-label">WORKED EXAMPLE</span><strong>10 points × 1 MES</strong><p>Planned price-move loss to a hypothetical stop: 10 × $5 × 1 = $50, before fees or slippage.</p></article>
+          <article class="example near-miss"><span class="example-label">NEAR-MISS</span><strong>10 points × 2 MES</strong><p>Not still $50. Two contracts double the planned price-move loss to $100.</p></article>
+        </div>
+        <div class="risk-calculator">
+          <h3>Practice the arithmetic</h3>
+          <p>Enter a hypothetical stop distance and contract count. This does not place or suggest a trade.</p>
+          <div class="risk-inputs">
+            <label>Distance in index points<input id="risk-points" type="number" min="0.25" step="0.25" value="10" inputmode="decimal"></label>
+            <label>MES contracts<input id="risk-contracts" type="number" min="1" max="100" step="1" value="1" inputmode="numeric"></label>
+          </div>
+          <output id="risk-result" aria-live="polite"></output>
+          <p class="risk-caveat">Actual loss can exceed this figure because of gaps, slippage, fees, or a stop not filling at its trigger price. Check the live contract specification before trading.</p>
+        </div>
+        <div class="lesson-actions"><button class="button button-ghost" type="button" data-action="back-today">← Today</button><button class="button button-primary" type="button" data-action="practice-risk">Quiz me →</button></div>
+      </section>
+      <aside class="lesson-rail"><h3>What this does—and does not—teach</h3><ul><li>Calculate MES price-move exposure.</li><li>See how quantity changes the dollars at risk.</li><li>No TradePhantoms setup, target, or stop location is claimed here.</li></ul><div class="source-proof"><span class="status-chip confirmed">CME SOURCES</span><p><a href="https://www.cmegroup.com/markets/equities/sp/micro-e-mini-sandp-500.html" target="_blank" rel="noopener noreferrer">MES contract details ↗</a><br><a href="https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/futures-order-types" target="_blank" rel="noopener noreferrer">Futures order types ↗</a></p></div></aside>
+    </div>`;
+
+  const pointsInput = viewRoot.querySelector("#risk-points");
+  const contractsInput = viewRoot.querySelector("#risk-contracts");
+  const result = viewRoot.querySelector("#risk-result");
+  function updateRisk() {
+    const points = Number(pointsInput.value);
+    const contracts = Number(contractsInput.value);
+    if (!Number.isFinite(points) || points <= 0 || Math.round(points * 4) !== points * 4 || !Number.isInteger(contracts) || contracts < 1 || contracts > 100) {
+      result.textContent = "Enter a positive quarter-point distance and 1–100 whole contracts.";
+      return;
+    }
+    const amount = points * 5 * contracts;
+    result.textContent = `${points} points × $5 × ${contracts} contract${contracts === 1 ? "" : "s"} = $${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} before costs or slippage`;
+  }
+  pointsInput.addEventListener("input", updateRisk);
+  contractsInput.addEventListener("input", updateRisk);
+  updateRisk();
+  viewRoot.querySelector('[data-action="back-today"]').addEventListener("click", () => setView("today"));
+  viewRoot.querySelector('[data-action="practice-risk"]').addEventListener("click", () => startPractice(practiceQuestions.findIndex((item) => item.concept === "mes-risk")));
+}
+
+function renderOrders() {
+  viewRoot.innerHTML = `
+    <div class="lesson-layout">
+      <section class="lesson-card">
+        <div class="lesson-meta"><span>ORDER MECHANICS · PUBLIC CME SOURCE</span><span>REPLAY FIRST</span></div>
+        <h2>Know your position before pressing Buy or Sell</h2>
+        <p class="lesson-lead">An order button does not know your intention. The result depends on your <strong>current position</strong>, the <strong>order side</strong>, the <strong>quantity</strong>, and whether the order fills.</p>
+
+        <div class="compare-grid">
+          <article class="example good-example"><span class="example-label">LONG 1 → SELL 1</span><strong>Usually returns to flat</strong><p>The sell offsets the existing long. Verify the position reads 0 after the fill.</p></article>
+          <article class="example near-miss"><span class="example-label">FLAT → SELL 1</span><strong>Can open short 1</strong><p>Pressing Sell while flat is not an exit. If filled, it can create a new short position.</p></article>
+        </div>
+
+        <div class="risk-calculator order-checklist">
+          <h3>Before-any-click checklist</h3>
+          <p>Complete this in Replay until you can do it without guessing.</p>
+          <label><input type="checkbox" data-order-check> I can see whether the account is Live or Replay.</label>
+          <label><input type="checkbox" data-order-check> I read the current position: Long, Flat, or Short—and the quantity.</label>
+          <label><input type="checkbox" data-order-check> I checked the exact symbol and contract month.</label>
+          <label><input type="checkbox" data-order-check> I know whether this order opens, adds, reduces, or closes.</label>
+          <label><input type="checkbox" data-order-check> I checked side, order type, quantity, and price before submitting.</label>
+          <label><input type="checkbox" data-order-check> If entering, I know the invalidation and planned dollar risk before the click.</label>
+          <output id="order-ready" aria-live="polite">0 of 6 checks complete — do not submit yet.</output>
+        </div>
+
+        <div class="compare-grid">
+          <article class="example"><span class="example-label">MARKET</span><strong>Execution first</strong><p>Seeks an immediate fill. The execution price is not guaranteed.</p></article>
+          <article class="example"><span class="example-label">LIMIT</span><strong>Price boundary</strong><p>Controls the worst acceptable price, but may not fill.</p></article>
+          <article class="example"><span class="example-label">STOP</span><strong>Trigger first</strong><p>Becomes eligible after its trigger. A stop does not guarantee the final fill price.</p></article>
+          <article class="example"><span class="example-label">BRACKET</span><strong>Verify both sides</strong><p>After entry, confirm the target and protective stop are accepted, Working, and match the open quantity.</p></article>
+        </div>
+
+        <div class="source-proof order-warning"><span class="status-chip not-shown">NOT PROTECTED YET</span><p>Typing a stop distance into a ticket is not protection. For a long, verify a submitted and accepted <strong>Sell Stop</strong> for the correct quantity below the market. For a short, verify a <strong>Buy Stop</strong> above it.</p></div>
+        <div class="lesson-actions"><button class="button button-ghost" type="button" data-action="back-today">← Today</button><button class="button button-primary" type="button" data-action="practice-orders">Quiz me →</button></div>
+      </section>
+      <aside class="lesson-rail"><h3>Position-state map</h3><ul><li>Long + Sell same quantity → flat.</li><li>Long + Sell smaller quantity → reduced long.</li><li>Flat + Sell → short if filled.</li><li>Short + Buy same quantity → flat.</li><li>Never assume “rejected,” “submitted,” and “filled” mean the same thing.</li></ul><div class="source-proof"><span class="status-chip confirmed">CME EDUCATION</span><p><a href="https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/futures-order-types" target="_blank" rel="noopener noreferrer">Futures order types ↗</a></p></div></aside>
+    </div>`;
+
+  const checks = [...viewRoot.querySelectorAll("[data-order-check]")];
+  const ready = viewRoot.querySelector("#order-ready");
+  function updateChecklist() {
+    const complete = checks.filter((item) => item.checked).length;
+    ready.textContent = complete === checks.length
+      ? "6 of 6 checks complete — now explain the intended result out loud before submitting in Replay."
+      : `${complete} of ${checks.length} checks complete — do not submit yet.`;
+  }
+  checks.forEach((item) => item.addEventListener("change", updateChecklist));
+  viewRoot.querySelector('[data-action="back-today"]').addEventListener("click", () => setView("today"));
+  viewRoot.querySelector('[data-action="practice-orders"]').addEventListener("click", () => startPractice(practiceQuestions.findIndex((item) => item.concept === "order-safety")));
 }
 
 function renderEvidence() {
@@ -399,6 +605,8 @@ function renderEvidence() {
           <div class="evidence-row" role="row"><strong>Expiration / settlement</strong><span>Written notes, p. 22</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Exact video timestamps</strong><span>End-to-end review pending</span><span class="status-chip not-shown">UNKNOWN</span></div>
           <div class="evidence-row" role="row"><strong>Entry / stop / target</strong><span>Not present in Part I notes</span><span class="status-chip not-shown">NOT SHOWN</span></div>
+          <div class="evidence-row" role="row"><strong>MES risk arithmetic</strong><span>CME contract specification; separate from Part I</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Order and position safety</strong><span>CME order-type education; separate from Part I</span><span class="status-chip confirmed">CONFIRMED</span></div>
         </div>
       </section>
       <aside class="evidence-side">
@@ -457,8 +665,8 @@ function registerWebMcpTools() {
   register({
     name: "open_futures_study_view",
     title: "Open futures study view",
-    description: "Navigate the app to Today, Learn, Practice, Mistake book, Mastery map, or Evidence.",
-    inputSchema: { type: "object", properties: { view: { type: "string", enum: ["today", "learn", "practice", "mistakes", "mastery", "evidence"] } }, required: ["view"], additionalProperties: false },
+    description: "Navigate the app to Today, Learn, MES risk lab, Order safety lab, Practice, Mistake book, Mastery map, or Evidence.",
+    inputSchema: { type: "object", properties: { view: { type: "string", enum: ["today", "learn", "risk", "orders", "practice", "mistakes", "mastery", "evidence"] } }, required: ["view"], additionalProperties: false },
     annotations: { readOnlyHint: false, untrustedContentHint: false },
     execute(input) {
       if (!input || !titles[input.view]) throw new Error("Unknown study view");
@@ -468,7 +676,7 @@ function registerWebMcpTools() {
   });
 }
 
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4").catch(() => {}));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=6").catch(() => {}));
 
 window.addEventListener("hashchange", () => {
   const requestedView = window.location.hash.slice(1);

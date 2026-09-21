@@ -9,9 +9,9 @@
       content="A private-by-default futures study coach built from verified TradingPhantoms notes."
     />
     <title>Trading Mastery Coach</title>
-    <link rel="manifest" href="./manifest.webmanifest?v=4" />
+    <link rel="manifest" href="./manifest.webmanifest?v=6" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=4" />
+    <link rel="stylesheet" href="./styles.css?v=6" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to lesson</a>
@@ -28,6 +28,12 @@
           </button>
           <button class="nav-item" data-view="learn" type="button">
             <span aria-hidden="true">◇</span> Learn
+          </button>
+          <button class="nav-item" data-view="risk" type="button">
+            <span aria-hidden="true">$</span> MES risk lab
+          </button>
+          <button class="nav-item" data-view="orders" type="button">
+            <span aria-hidden="true">⇄</span> Order safety lab
           </button>
           <button class="nav-item" data-view="practice" type="button">
             <span aria-hidden="true">↗</span> Practice
@@ -52,12 +58,13 @@
       <main id="main" tabindex="-1">
         <header class="topbar">
           <div>
-            <p class="eyebrow">TradePhantoms · Futures Focus</p>
+            <p class="eyebrow" id="course-eyebrow">TradePhantoms · Futures Focus</p>
             <h1 id="page-title">Today’s study</h1>
           </div>
           <div class="top-actions">
             <button id="install-button" class="button button-ghost hidden" type="button" aria-label="Install app">Install app</button>
             <a
+              id="course-link"
               class="button button-ghost"
               href="https://tradephantoms-s-site.thinkific.com/courses/take/copy-of-tradephantoms-forex-focus-course/lessons/66586089-tradephantoms-futures-focus-part-i"
               target="_blank"
@@ -77,8 +84,8 @@
           <div class="panel-heading">
             <div>
               <span class="status-chip confirmed">CURRENT · PART I</span>
-              <h2>Read a futures contract symbol</h2>
-              <p>Learn the three parts of a dated symbol before moving to rollover or chart selection.</p>
+              <h2 id="today-focus">Build futures foundations</h2>
+              <p id="today-description">Recall a concept, check the source, and work through a near-miss.</p>
             </div>
             <div class="progress-ring" role="img" aria-label="Course mastery progress">
               <span id="progress-number">0%</span>
@@ -86,13 +93,14 @@
           </div>
 
           <div class="session-plan" aria-label="Today's session plan">
-            <div class="plan-step active"><span>01</span><div><strong>Recall</strong><small>3 questions · 3 min</small></div></div>
-            <div class="plan-step"><span>02</span><div><strong>Learn</strong><small>Symbol anatomy · 7 min</small></div></div>
-            <div class="plan-step"><span>03</span><div><strong>Compare</strong><small>Valid vs near-miss · 5 min</small></div></div>
-            <div class="plan-step"><span>04</span><div><strong>Teach back</strong><small>Explain without notes · 5 min</small></div></div>
+            <div class="plan-step active"><span>01</span><div><strong>Recall</strong><small>Due and missed first</small></div></div>
+            <div class="plan-step"><span>02</span><div><strong>Learn</strong><small>Check the evidence</small></div></div>
+            <div class="plan-step"><span>03</span><div><strong>Compare</strong><small>Worked vs near-miss</small></div></div>
+            <div class="plan-step"><span>04</span><div><strong>Teach back</strong><small>Explain without notes</small></div></div>
           </div>
 
           <button class="button button-primary" data-action="start-learning" type="button">Start recall</button>
+          <button class="button button-ghost today-secondary" data-action="open-risk" type="button">Open MES risk lab</button>
         </section>
 
         <section class="side-stack">
@@ -174,6 +182,6 @@
       </div>
     </template>
 
-    <script src="./app.js?v=4" defer></script>
+    <script src="./app.js?v=6" defer></script>
   </body>
 </html>
