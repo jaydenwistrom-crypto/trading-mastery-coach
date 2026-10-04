@@ -4,9 +4,9 @@ The Trading Mastery Coach is an installable, static study application for the pu
 
 Current scope:
 
-- TradePhantoms Futures Focus Part I foundations
-- one worked symbol-anatomy lesson with a controlled near-miss
-- active-recall questions across all confirmed Part I topics
+- TradePhantoms Futures Focus Parts I–III foundations
+- interactive lessons for symbol anatomy, rollover/chart gaps, and Globex traps
+- active-recall questions across confirmed Parts I–III topics
 - device-local review scheduling and mistake tracking
 - mastery status based on two different correctly answered examples, not repetition or video completion
 - mistakes that clear only after the missed question is answered correctly

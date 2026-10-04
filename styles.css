@@ -210,6 +210,10 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 .unknown-dot { background: var(--amber); }
 
 .lesson-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 1rem; align-items: start; }
+.lesson-switcher { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .8rem; }
+.lesson-switcher button { min-height: 40px; padding: .55rem .8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--muted); cursor: pointer; }
+.lesson-switcher button:hover, .lesson-switcher button:focus-visible, .lesson-switcher button.active { border-color: var(--blue); color: var(--text); outline: none; }
+.lesson-switcher button.active { background: var(--blue-soft); color: var(--blue); }
 .lesson-card { padding: clamp(1.25rem, 3vw, 2.3rem); }
 .lesson-meta { display: flex; justify-content: space-between; color: var(--blue); font-size: .7rem; font-weight: 800; letter-spacing: .1em; }
 .lesson-card h2 { margin: 1.2rem 0 .7rem; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: -.055em; }
@@ -220,6 +224,22 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 .symbol-demo div + div { border-left: 1px solid var(--line-bright); }
 .symbol-demo strong { color: var(--blue); font: 850 clamp(2.5rem, 7vw, 5.5rem)/.9 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.09em; }
 .symbol-demo span { margin-top: .8rem; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; }
+
+.cycle-map { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .7rem; align-items: center; margin: 2rem 0 1rem; }
+.cycle-map div { min-height: 122px; display: grid; align-content: center; padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(8, 12, 16, .55); }
+.cycle-map span, .trap-map span { color: var(--blue); font-size: .67rem; font-weight: 850; letter-spacing: .1em; }
+.cycle-map strong, .cycle-map small { display: block; }
+.cycle-map strong { margin: .55rem 0 .25rem; }
+.cycle-map small { color: var(--muted); line-height: 1.45; }
+.cycle-map i { color: var(--blue); font-style: normal; }
+.trap-map { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: 2rem 0 1rem; }
+.trap-map article { min-height: 160px; padding: 1.2rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(8, 12, 16, .55); }
+.trap-map article:first-child { border-bottom: 3px solid var(--green); }
+.trap-map article:last-child { border-top: 3px solid var(--red); }
+.trap-map strong { display: block; margin: .7rem 0 .45rem; font-size: 1.2rem; }
+.trap-map p { margin: 0; color: var(--muted); line-height: 1.55; }
+.unknown-strip { display: flex; align-items: flex-start; gap: .8rem; margin-top: 1.2rem; padding: 1rem; border: 1px solid var(--amber); border-radius: 12px; background: var(--amber-soft); }
+.unknown-strip p { margin: 0; color: #d8c4aa; line-height: 1.55; }
 
 .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
 .example { padding: 1.2rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(8, 12, 16, .55); }
@@ -318,6 +338,7 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
 
 .evidence-side { display: grid; gap: 1rem; }
 .evidence-side .source-card { min-height: 260px; }
+.evidence-links { align-items: stretch; }
 .evidence-side h3 { margin: .8rem 0 .35rem; }
 .evidence-side p { margin: 0 0 1rem; color: var(--muted); line-height: 1.55; }
 .evidence-table { margin-top: 1.2rem; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; }
@@ -358,6 +379,9 @@ h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.45rem); letter-spacing: -.045em
   .symbol-demo div { min-height: 100px; }
   .symbol-demo strong { font-size: 2.4rem; }
   .compare-grid { grid-template-columns: 1fr; }
+  .cycle-map { grid-template-columns: 1fr; }
+  .cycle-map i { transform: rotate(90deg); justify-self: center; }
+  .trap-map { grid-template-columns: 1fr; }
   .answer-options { display: grid; }
   .lesson-actions { flex-direction: column-reverse; }
   .nav-item { font-size: .58rem; }

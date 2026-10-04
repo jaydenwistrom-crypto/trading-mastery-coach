@@ -8,12 +8,16 @@ const defaultState = {
 };
 
 const concepts = [
-  { id: "symbol-anatomy", title: "Symbol anatomy", source: "Pages 13–14", available: true },
-  { id: "month-codes", title: "Contract-month codes", source: "Page 14" },
-  { id: "participants", title: "Hedgers and speculators", source: "Page 12" },
-  { id: "contracts-ticks", title: "Contracts and ticks", source: "Page 22" },
-  { id: "expiry-settlement", title: "Expiration and settlement", source: "Page 22" },
-  { id: "strategy-boundary", title: "Evidence boundary", source: "Pages 1–23" },
+  { id: "symbol-anatomy", title: "Symbol anatomy", source: "Part I · pp. 13–14", available: true, lesson: "part1" },
+  { id: "month-codes", title: "Contract-month codes", source: "Part I · p. 14" },
+  { id: "participants", title: "Hedgers and speculators", source: "Part I · p. 12" },
+  { id: "contracts-ticks", title: "Contracts and ticks", source: "Part I · p. 22" },
+  { id: "expiry-settlement", title: "Expiration and settlement", source: "Part I · p. 22" },
+  { id: "rollover", title: "Front month and rollover", source: "Part II · pp. 6–8", available: true, lesson: "part2" },
+  { id: "chart-gaps", title: "Chart types and gaps", source: "Part II · pp. 8–13", available: true, lesson: "part2" },
+  { id: "timeframe-roles", title: "Futures timeframe roles", source: "Part III · pp. 3–4", available: true, lesson: "part3" },
+  { id: "globex-traps", title: "Globex trap map", source: "Part III · pp. 7–12", available: true, lesson: "part3" },
+  { id: "strategy-boundary", title: "Evidence boundary", source: "Parts I–III" },
   { id: "mes-risk", title: "MES risk arithmetic", source: "CME contract specifications", available: true },
   { id: "order-safety", title: "Order and position safety", source: "CME order-type education", available: true },
 ];
@@ -98,6 +102,78 @@ const practiceQuestions = [
     options: ["Physical delivery and cash settlement", "Stock split and dividend", "Limit order and market order"],
     answer: 0,
     explanation: "The notes identify physical delivery and cash settlement as contract-dependent outcomes.",
+  },
+  {
+    id: "rollover-volume",
+    concept: "rollover",
+    prompt: "According to Part II, when has rollover occurred?",
+    options: ["When the back-month volume exceeds the front-month volume", "On the first day of every month", "Whenever price gaps overnight"],
+    answer: 0,
+    explanation: "Part II defines rollover by the liquidity shift: the back month becomes the new front month when its volume exceeds the old front month.",
+  },
+  {
+    id: "front-month",
+    concept: "rollover",
+    prompt: "What identifies the front-month contract in the Part II notes?",
+    options: ["The farthest expiration", "The contract with the most trading volume", "The contract with the widest spread"],
+    answer: 1,
+    explanation: "The notes define the front month as the contract with the most volume being traded.",
+  },
+  {
+    id: "gap-chart",
+    concept: "chart-gaps",
+    prompt: "A gap appears only on an unadjusted continuous chart at the switch between contract months. What is it?",
+    options: ["A natural gap", "A rollover gap", "A confirmed entry signal"],
+    answer: 1,
+    explanation: "Part II says rollover gaps arise from the price difference between contract months and appear on unadjusted continuous charts.",
+  },
+  {
+    id: "natural-gap",
+    concept: "chart-gaps",
+    prompt: "Where can a natural gap appear according to Part II?",
+    options: ["Contract-specific and unadjusted continuous charts", "Only adjusted continuous charts", "Only a DOM ladder"],
+    answer: 0,
+    explanation: "Natural gaps can appear on contract-specific and unadjusted continuous charts when the asset does not trade continuously or gaps while closed.",
+  },
+  {
+    id: "intraday-timeframes",
+    concept: "timeframe-roles",
+    prompt: "For short-term/hourly intraday trading, which Part III mapping is shown?",
+    options: ["1-hour HTF, 15-minute ITF, 5-minute LTF", "Daily HTF, 1-hour ITF, 1-minute LTF", "Weekly HTF, daily ITF, 4-hour LTF"],
+    answer: 0,
+    explanation: "Part III maps short-term/hourly intraday work to 1-hour context, 15-minute intermediate structure, and 5-minute lower-timeframe execution work.",
+  },
+  {
+    id: "daily-timeframes",
+    concept: "timeframe-roles",
+    prompt: "For daily intraday trading, which Part III mapping is shown?",
+    options: ["4-hour HTF, 1-hour ITF, 15-minute LTF", "1-hour HTF, 15-minute ITF, 5-minute LTF", "Monthly HTF, weekly ITF, daily LTF"],
+    answer: 0,
+    explanation: "The daily-intraday mapping shown is 4-hour HTF, 1-hour ITF, and 15-minute LTF.",
+  },
+  {
+    id: "bear-trap",
+    concept: "globex-traps",
+    prompt: "Which context describes the Part III Globex bear-trap candidate?",
+    options: ["Price breaks below the Globex low into institutional demand, especially with an uptrend", "Price breaks above the Globex high into demand", "Any red candle during the overnight session"],
+    answer: 0,
+    explanation: "The notes pair a downside break of the Globex low with institutional demand, especially in an overall uptrend and consistent range.",
+  },
+  {
+    id: "bull-trap",
+    concept: "globex-traps",
+    prompt: "Which context describes the Part III Globex bull-trap candidate?",
+    options: ["Price breaks above the Globex high into institutional supply, especially with a downtrend", "Price breaks below the Globex low into supply", "Every upside breakout"],
+    answer: 0,
+    explanation: "The notes pair an upside break of the Globex high with institutional supply, especially in an overall downtrend and consistent range.",
+  },
+  {
+    id: "trap-boundary",
+    concept: "strategy-boundary",
+    prompt: "Do the Part III class-note slides specify an exact entry trigger, stop price, and target formula for Globex traps?",
+    options: ["Yes, all three", "No; those details are not shown on the slides", "Only for MES"],
+    answer: 1,
+    explanation: "The slides establish context and direction, but the exact trigger, stop placement, target selection, and expiry are not stated there. They remain UNKNOWN unless video evidence confirms them.",
   },
   {
     id: "strategy",
@@ -201,6 +277,7 @@ function saveState() {
 
 let state = loadState();
 let currentView = "today";
+let selectedLearnLesson = "part3";
 let deferredInstallPrompt = null;
 
 const viewRoot = document.querySelector("#view-root");
@@ -257,7 +334,7 @@ function renderToday() {
   const due = getDueReviewCount();
   const openMistakes = state.mistakes.filter((item) => !item.resolved).length;
   content.querySelector("#due-count").textContent = String(due);
-  content.querySelector("#today-focus").textContent = due ? "Review what is due" : openMistakes ? "Repair a missed question" : "Build futures foundations";
+  content.querySelector("#today-focus").textContent = due ? "Review what is due" : openMistakes ? "Repair a missed question" : "Build the Futures Focus cycle";
   content.querySelector("#today-description").textContent = due
     ? `${due} concept${due === 1 ? " is" : "s are"} due. Recall first, then check the explanation.`
     : openMistakes ? `${openMistakes} correction${openMistakes === 1 ? " needs" : "s need"} another attempt.`
@@ -320,37 +397,105 @@ function recordAnswer(question, correct) {
 }
 
 function renderLearn() {
-  const content = cloneTemplate("#learn-template");
-  const completeButton = content.querySelector('[data-action="complete-concept"]');
-  const feedback = content.querySelector("#answer-feedback");
+  const lessons = {
+    part1: {
+      label: "PART I · FOUNDATION",
+      duration: "SYMBOL LITERACY",
+      title: "Read a dated futures symbol",
+      lead: "A dated symbol answers three questions: what is traded, which contract month, and which year.",
+      visual: `<div class="symbol-demo" aria-label="GCQ23 symbol breakdown"><div><strong>GC</strong><span>Gold root</span></div><div><strong>Q</strong><span>August</span></div><div><strong>23</strong><span>2023</span></div></div>`,
+      goodTitle: "GCQ23",
+      goodText: "Gold contract for August 2023. All three required pieces are visible.",
+      missTitle: "GC23",
+      missText: "The root and year are visible, but the contract-month code is missing.",
+      question: "What does Q communicate in GCQ23?",
+      options: ["The exchange", "The August contract month", "The tick value"],
+      answer: 1,
+      explanation: "Q identifies the August contract month.",
+      concept: "symbol-anatomy",
+      source: "Part I written notes, pp. 13–14.",
+      gates: ["Explain all three symbol parts.", "Decode two different symbols.", "Reject an incomplete dated symbol."],
+    },
+    part2: {
+      label: "PART II · CONTRACT MAP",
+      duration: "97-MIN SOURCE LESSON",
+      title: "Know which chart—and which gap—you are seeing",
+      lead: "Rollover is a liquidity change, not merely a calendar date. The back month becomes the new front month when its volume overtakes the old front month.",
+      visual: `<div class="cycle-map" aria-label="Futures rollover flow"><div><span>01</span><strong>Compare volume</strong><small>Front month vs back month</small></div><i>→</i><div><span>02</span><strong>Liquidity shifts</strong><small>Back month exceeds front</small></div><i>→</i><div><span>03</span><strong>Roll focus</strong><small>Trade the new front month</small></div></div>`,
+      goodTitle: "ROLLOVER GAP",
+      goodText: "A price difference between two contract months, visible on an unadjusted continuous chart at rollover.",
+      missTitle: "NATURAL GAP",
+      missText: "A real market gap while trading is closed. It can appear on contract-specific and unadjusted continuous charts.",
+      question: "Back-month volume now exceeds front-month volume. What changed?",
+      options: ["A natural gap formed", "Rollover occurred", "The tick value changed"],
+      answer: 1,
+      explanation: "Correct. Part II uses the volume shift as the rollover test.",
+      concept: "rollover",
+      source: "Part II written notes, pp. 6–13. Video timestamps remain a separate verification layer.",
+      gates: ["Name front month by volume.", "Separate rollover gaps from natural gaps.", "Choose contract-specific vs continuous charts intentionally."],
+    },
+    part3: {
+      label: "PART III · SETUP CONTEXT",
+      duration: "64-MIN SOURCE LESSON",
+      title: "Map a Globex trap without inventing the trigger",
+      lead: "Mark the Globex high and low before regular hours. A valid trap candidate requires a breakout into institutional supply or demand—not a blind fade of every breakout.",
+      visual: `<div class="trap-map" aria-label="Globex trap comparison"><article><span>BEAR TRAP · LONG CONTEXT</span><strong>Break below Globex low</strong><p>Into institutional demand; strongest course context is an overall uptrend and consistent range.</p></article><article><span>BULL TRAP · SHORT CONTEXT</span><strong>Break above Globex high</strong><p>Into institutional supply; strongest course context is an overall downtrend and consistent range.</p></article></div>`,
+      goodTitle: "QUALIFIED CANDIDATE",
+      goodText: "Globex boundary break + high-quality impulse–basing–impulse supply/demand outside the range + higher-timeframe context.",
+      missTitle: "BLIND FADE",
+      missText: "Shorting every new Globex high or buying every new Globex low. The lesson does not support that rule.",
+      question: "Price breaks above the Globex high into institutional supply during an overall downtrend. Which candidate is it?",
+      options: ["Bear trap / long context", "Bull trap / short context", "Automatic breakout buy"],
+      answer: 1,
+      explanation: "Correct. Part III calls this a Globex bull trap: the trapped group is the breakout buyers, while the planned direction is short.",
+      concept: "globex-traps",
+      source: "Part III notes, pp. 7–12; video confirms the core map at 04:34–36:57, including IBI and trend alignment.",
+      gates: ["Map Globex high and low.", "Require supply or demand outside the range.", "State the higher-timeframe trend.", "Say UNKNOWN for trigger, stop, and target until taught."],
+    },
+  };
+  const lesson = lessons[selectedLearnLesson] || lessons.part3;
+  const lessonUrls = {
+    part1: "https://tradephantoms-s-site.thinkific.com/courses/take/copy-of-tradephantoms-forex-focus-course/lessons/66586089-tradephantoms-futures-focus-part-i",
+    part2: "https://tradephantoms-s-site.thinkific.com/courses/take/copy-of-tradephantoms-forex-focus-course/lessons/66586091-tradephantoms-futures-focus-part-ii",
+    part3: "https://tradephantoms-s-site.thinkific.com/courses/take/copy-of-tradephantoms-forex-focus-course/lessons/66586092-tradephantoms-futures-focus-part-iii",
+  };
+  document.querySelector("#course-link").href = lessonUrls[selectedLearnLesson] || lessonUrls.part3;
+  viewRoot.innerHTML = `
+    <div class="lesson-switcher" role="group" aria-label="Futures Focus lesson selector">
+      <button type="button" data-lesson="part1">Part I · Symbols</button>
+      <button type="button" data-lesson="part2">Part II · Rollover</button>
+      <button type="button" data-lesson="part3">Part III · Globex traps</button>
+    </div>
+    <div class="lesson-layout">
+      <section class="lesson-card">
+        <div class="lesson-meta"><span>${lesson.label}</span><span>${lesson.duration}</span></div>
+        <h2>${lesson.title}</h2><p class="lesson-lead">${lesson.lead}</p>${lesson.visual}
+        <div class="compare-grid"><article class="example good-example"><span class="example-label">CONFIRMED</span><strong>${lesson.goodTitle}</strong><p>${lesson.goodText}</p></article><article class="example near-miss"><span class="example-label">NEAR-MISS</span><strong>${lesson.missTitle}</strong><p>${lesson.missText}</p></article></div>
+        ${selectedLearnLesson === "part3" ? `<div class="unknown-strip"><span class="status-chip not-shown">UNKNOWN</span><p>The reviewed class-note slides do not specify the exact entry trigger, stop placement, target formula, setup expiry, or management rule. Do not turn this context map into an automatic live entry.</p></div>` : ""}
+        <div class="knowledge-check"><span class="example-label">CHECK YOURSELF</span><h3>${lesson.question}</h3><div class="answer-options" role="group" aria-label="Answer choices">${lesson.options.map((option, index) => `<button type="button" data-answer="${index}">${option}</button>`).join("")}</div><p id="answer-feedback" class="answer-feedback" aria-live="polite"></p></div>
+        <div class="lesson-actions"><button class="button button-ghost" data-action="back-today" type="button">← Today</button><button class="button button-primary" data-action="complete-concept" type="button" disabled>Mark concept understood</button></div>
+      </section>
+      <aside class="lesson-rail"><h3>Mastery gate</h3><ul>${lesson.gates.map((gate) => `<li>${gate}</li>`).join("")}</ul><div class="source-proof"><span class="status-chip confirmed">CONFIRMED</span><p>${lesson.source}</p></div></aside>
+    </div>`;
 
-  content.querySelectorAll("[data-answer]").forEach((button) => {
-    button.addEventListener("click", () => {
-      content.querySelectorAll("[data-answer]").forEach((item) => item.classList.remove("correct", "wrong"));
-      const correct = button.dataset.answer === "correct";
-      button.classList.add(correct ? "correct" : "wrong");
-      feedback.textContent = correct
-        ? "Correct. Q is the August contract-month code."
-        : "Not yet. Q identifies the August contract month; the root and year carry the other information.";
-      completeButton.disabled = !correct;
-
-      if (!correct) {
-        const existing = state.mistakes.find((item) => item.questionId === "month-q" && !item.resolved);
-        if (!existing) state.mistakes.unshift({ questionId: "month-q", conceptId: "symbol-anatomy", concept: "Symbol anatomy", note: "Q identifies the August contract month.", at: Date.now(), resolved: false });
-        saveState();
-      }
-    });
+  viewRoot.querySelectorAll("[data-lesson]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.lesson === selectedLearnLesson);
+    button.addEventListener("click", () => { selectedLearnLesson = button.dataset.lesson; renderLearn(); });
   });
-
-  content.querySelector('[data-action="back-today"]').addEventListener("click", () => setView("today"));
+  const completeButton = viewRoot.querySelector('[data-action="complete-concept"]');
+  const feedback = viewRoot.querySelector("#answer-feedback");
+  viewRoot.querySelectorAll("[data-answer]").forEach((button) => button.addEventListener("click", () => {
+    viewRoot.querySelectorAll("[data-answer]").forEach((item) => item.classList.remove("correct", "wrong"));
+    const correct = Number(button.dataset.answer) === lesson.answer;
+    button.classList.add(correct ? "correct" : "wrong");
+    feedback.textContent = correct ? lesson.explanation : `Not yet. ${lesson.explanation}`;
+    completeButton.disabled = !correct;
+  }));
+  viewRoot.querySelector('[data-action="back-today"]').addEventListener("click", () => setView("today"));
   completeButton.addEventListener("click", () => {
-    if (!state.completedConcepts.includes("symbol-anatomy")) state.completedConcepts.push("symbol-anatomy");
-    scheduleReview("symbol-anatomy", "hard");
-    saveState();
-    setView("today");
+    if (!state.completedConcepts.includes(lesson.concept)) state.completedConcepts.push(lesson.concept);
+    scheduleReview(lesson.concept, "hard"); saveState(); setView("today");
   });
-
-  viewRoot.append(content);
 }
 
 let practiceIndex = 0;
@@ -381,11 +526,14 @@ function renderPractice() {
   practiceTargetIndex = null;
   const question = practiceQuestions[practiceIndex];
   const isCme = question.concept === "mes-risk" || question.concept === "order-safety";
+  const part = ["rollover", "chart-gaps"].includes(question.concept) ? "PART II NOTES"
+    : ["timeframe-roles", "globex-traps"].includes(question.concept) ? "PART III NOTES"
+      : "PART I NOTES";
   viewRoot.innerHTML = `
     <div class="practice-layout">
       <section class="practice-card">
         <div class="lesson-meta"><span>ACTIVE RECALL</span><span>${concepts.find((item) => item.id === question.concept)?.title || "Futures foundations"}</span></div>
-        <span class="status-chip confirmed">${isCme ? "CME-SOURCED EDUCATION" : "PART I NOTES"}</span>
+        <span class="status-chip confirmed">${isCme ? "CME-SOURCED EDUCATION" : part}</span>
         <h2>${question.prompt}</h2>
         <div class="practice-options" role="group" aria-label="Answer choices">
           ${question.options.map((option, index) => `<button type="button" data-option="${index}"><span>${String.fromCharCode(65 + index)}</span>${option}</button>`).join("")}
@@ -400,7 +548,7 @@ function renderPractice() {
       <aside class="lesson-rail">
         <h3>How to answer</h3>
         <p class="rail-copy">Commit to an answer before checking. Effortful retrieval strengthens memory more than rereading the note.</p>
-        <div class="source-proof"><span class="status-chip not-shown">NO GUESSING</span><p>${isCme ? "This is public futures-safety education, not a TradePhantoms entry system. Practice the mechanics in Replay before risking money." : "If the Part I notes do not establish an answer, the correct response is UNKNOWN."}</p></div>
+        <div class="source-proof"><span class="status-chip not-shown">NO GUESSING</span><p>${isCme ? "This is public futures-safety education, not a TradePhantoms entry system. Practice the mechanics in Replay before risking money." : "If the reviewed lesson evidence does not establish an answer, the correct response is UNKNOWN."}</p></div>
       </aside>
     </div>`;
 
@@ -471,7 +619,7 @@ function renderMastery() {
   const mastered = concepts.filter((concept) => conceptStatus(concept.id) === "MASTERED").length;
   viewRoot.innerHTML = `
     <section class="workspace-panel">
-      <div class="workspace-heading"><div><span class="eyebrow">FUTURES FOUNDATIONS · CME LAB</span><h2>Mastery map</h2><p>Completion is not mastery. Mastery requires two varied correct answers on different days, with no open correction for that concept.</p></div><strong>${mastered}/${concepts.length}</strong></div>
+      <div class="workspace-heading"><div><span class="eyebrow">FUTURES FOCUS I–III · CME LAB</span><h2>Mastery map</h2><p>Completion is not mastery. Mastery requires two varied correct answers on different days, with no open correction for that concept.</p></div><strong>${mastered}/${concepts.length}</strong></div>
       <div class="mastery-grid">
         ${concepts.map((concept, index) => {
           const status = conceptStatus(concept.id);
@@ -486,6 +634,8 @@ function renderMastery() {
       </div>
     </section>`;
   viewRoot.querySelectorAll("[data-open-learn]").forEach((button) => button.addEventListener("click", () => {
+    const concept = concepts.find((item) => item.id === button.dataset.openLearn);
+    if (concept?.lesson) selectedLearnLesson = concept.lesson;
     const destination = button.dataset.openLearn === "mes-risk" ? "risk" : button.dataset.openLearn === "order-safety" ? "orders" : "learn";
     setView(destination);
   }));
@@ -598,23 +748,27 @@ function renderEvidence() {
     <div class="evidence-layout">
       <section class="workspace-panel">
         <div class="workspace-heading"><div><span class="eyebrow">SOURCE CONTROL</span><h2>Evidence ledger</h2><p>Every claim is tied to what the source actually shows. Paid course files remain private.</p></div></div>
-        <div class="evidence-table" role="table" aria-label="Part I evidence ledger">
+        <div class="evidence-table" role="table" aria-label="Futures Focus evidence ledger">
           <div class="evidence-row evidence-head" role="row"><span>Topic</span><span>Support</span><span>Status</span></div>
           <div class="evidence-row" role="row"><strong>Symbol anatomy</strong><span>Written notes, pp. 13–14</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Market participants</strong><span>Written notes, p. 12</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Expiration / settlement</strong><span>Written notes, p. 22</span><span class="status-chip confirmed">CONFIRMED</span></div>
-          <div class="evidence-row" role="row"><strong>Exact video timestamps</strong><span>End-to-end review pending</span><span class="status-chip not-shown">UNKNOWN</span></div>
-          <div class="evidence-row" role="row"><strong>Entry / stop / target</strong><span>Not present in Part I notes</span><span class="status-chip not-shown">NOT SHOWN</span></div>
-          <div class="evidence-row" role="row"><strong>MES risk arithmetic</strong><span>CME contract specification; separate from Part I</span><span class="status-chip confirmed">CONFIRMED</span></div>
-          <div class="evidence-row" role="row"><strong>Order and position safety</strong><span>CME order-type education; separate from Part I</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Rollover / chart gaps</strong><span>Part II notes, pp. 6–13</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Timeframe roles</strong><span>Part III notes, pp. 3–4</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Globex trap context</strong><span>Part III notes, pp. 7–12; video 04:34–36:57</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Exact trigger / stop / target</strong><span>Not stated in the reviewed Part III slides</span><span class="status-chip not-shown">UNKNOWN</span></div>
+          <div class="evidence-row" role="row"><strong>MES risk arithmetic</strong><span>CME contract specification; separate public lab</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Order and position safety</strong><span>CME order-type education; separate public lab</span><span class="status-chip confirmed">CONFIRMED</span></div>
         </div>
       </section>
       <aside class="evidence-side">
-        <article class="source-card">
+        <article class="source-card evidence-links">
           <span class="metric-label">Public source record</span>
-          <h3>Futures Focus Part I</h3>
-          <p>Original summary, digest, page references, and explicit unknowns.</p>
+          <h3>Futures Focus Parts I–III</h3>
+          <p>Original summaries, page references, timestamped evidence, and explicit unknowns.</p>
           <a class="button button-ghost" href="https://github.com/jaydenwistrom-crypto/trading-mastery-coach/blob/main/evidence/FUTURES_FOCUS_PART_I.md" target="_blank" rel="noopener noreferrer">Open evidence file ↗</a>
+          <a class="button button-ghost" href="https://github.com/jaydenwistrom-crypto/trading-mastery-coach/blob/main/evidence/FUTURES_FOCUS_PART_II.md" target="_blank" rel="noopener noreferrer">Part II evidence ↗</a>
+          <a class="button button-ghost" href="https://github.com/jaydenwistrom-crypto/trading-mastery-coach/blob/main/evidence/FUTURES_FOCUS_PART_III.md" target="_blank" rel="noopener noreferrer">Part III evidence ↗</a>
         </article>
         <article class="boundary-card"><span class="status-chip not-shown">PRIVATE</span><h3>Course media stays out</h3><p>No paid video, transcript, source PDF, or private screenshot is bundled into this app.</p></article>
       </aside>
@@ -650,7 +804,7 @@ function registerWebMcpTools() {
   register({
     name: "get_futures_study_status",
     title: "Get futures study status",
-    description: "Read the visible Futures Part I study progress, open corrections, and due reviews.",
+    description: "Read the visible Futures Focus Parts I–III study progress, open corrections, and due reviews.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
     annotations: { readOnlyHint: true, untrustedContentHint: false },
     execute() {
@@ -676,7 +830,7 @@ function registerWebMcpTools() {
   });
 }
 
-if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=6").catch(() => {}));
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=7").catch(() => {}));
 
 window.addEventListener("hashchange", () => {
   const requestedView = window.location.hash.slice(1);
