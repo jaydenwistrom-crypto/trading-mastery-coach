@@ -449,7 +449,7 @@ function renderLearn() {
       answer: 1,
       explanation: "Correct. Part III calls this a Globex bull trap: the trapped group is the breakout buyers, while the planned direction is short.",
       concept: "globex-traps",
-      source: "Part III notes, pp. 7–12; video confirms the core map at 04:34–36:57, including IBI and trend alignment.",
+      source: "Part III notes, pp. 7–12; full 1:03:36 video reviewed with worked examples and explicit unknowns.",
       gates: ["Map Globex high and low.", "Require supply or demand outside the range.", "State the higher-timeframe trend.", "Say UNKNOWN for trigger, stop, and target until taught."],
     },
   };
@@ -755,7 +755,7 @@ function renderEvidence() {
           <div class="evidence-row" role="row"><strong>Expiration / settlement</strong><span>Written notes, p. 22</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Rollover / chart gaps</strong><span>Part II notes, pp. 6–13</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Timeframe roles</strong><span>Part III notes, pp. 3–4</span><span class="status-chip confirmed">CONFIRMED</span></div>
-          <div class="evidence-row" role="row"><strong>Globex trap context</strong><span>Part III notes, pp. 7–12; video 04:34–36:57</span><span class="status-chip confirmed">CONFIRMED</span></div>
+          <div class="evidence-row" role="row"><strong>Globex trap context</strong><span>Part III notes, pp. 7–12; full video reviewed</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Exact trigger / stop / target</strong><span>Not stated in the reviewed Part III slides</span><span class="status-chip not-shown">UNKNOWN</span></div>
           <div class="evidence-row" role="row"><strong>MES risk arithmetic</strong><span>CME contract specification; separate public lab</span><span class="status-chip confirmed">CONFIRMED</span></div>
           <div class="evidence-row" role="row"><strong>Order and position safety</strong><span>CME order-type education; separate public lab</span><span class="status-chip confirmed">CONFIRMED</span></div>

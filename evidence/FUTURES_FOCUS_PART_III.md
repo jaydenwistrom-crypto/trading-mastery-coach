@@ -2,7 +2,7 @@
 
 Status: `CONFIRMED SETUP CONTEXT`  
 Complete-strategy status: `UNKNOWN`  
-Source reviewed: TradePhantoms Futures Focus Part III class notes, 13 pages, plus timestamped video verification  
+Source reviewed: TradePhantoms Futures Focus Part III class notes, 13 pages, plus complete timestamped video review
 Lesson ID: `66586092`  
 Video duration: `1:03:39`
 
@@ -30,6 +30,18 @@ These are the mappings shown in the notes. They are roles for analysis and execu
 - `IBI` is defined in the video as **impulse–basing–impulse**. The instructor calls a high-quality IBI supply or demand zone outside the Globex range essential (`35:54–36:31`).
 - A slide mentions a Globex range of 75%–150% of daily ATR, but the instructor explicitly says he usually does not use that rule and that it is not required (`35:18–36:07`). It is therefore **not** encoded as a mandatory filter.
 
+## Worked chart examples shown
+
+| Timestamp | Instrument / timeframe | What is visibly demonstrated | Label |
+|---|---|---|---|
+| `12:38–25:54` | S&P futures, 1 hour | Globex high/low, qualified supply above the high, monthly/weekly/daily downtrend, and the short-side bull-trap direction | CONFIRMED |
+| `27:02–34:50` | Nasdaq futures, 1 hour | Globex low, qualified demand below it, macro uptrend, and the long-side bear-trap direction | CONFIRMED |
+| `41:27–49:38` | S&P futures, 1 hour | Live chart walkthrough marking the prior overnight high/low; the current session is not yet complete | CONFIRMED |
+| `50:19–56:21` | 30-year Treasury futures, 60 minute | Macro downtrend and supply above the Globex high; the instructor contrasts an unfilled early opportunity with a later touch | CONFIRMED |
+| `56:21–58:28` | Gold futures, 60 minute | Break below the Globex low into two IBI demand levels, with monthly uptrend, weekly demand, and choppy/ranging daily context | CONFIRMED |
+
+The examples confirm direction and location. They do not provide a reproducible candle trigger, a stop price formula, or a target-selection formula.
+
 ## Risk guidance shown in the notes
 
 - The notes say never to risk more than 2% of the account on a single trade and explicitly allow smaller risk.
@@ -51,6 +63,8 @@ The reviewed class-note slides do **not** state all of the following with execut
 - verified win rate, backtest, or live-performance evidence.
 
 Those fields remain `UNKNOWN` unless a timestamped chart demonstration explicitly establishes them. The Trading Mastery Coach therefore teaches this as a setup **map**, not an automatic trade signal.
+
+The full lesson was reviewed through `1:03:36`. The video repeatedly mentions using a stop loss (`25:16–25:32`, `32:38–33:47`, and `55:53–56:10`) but never states an exact placement rule in this lesson. It says the lower timeframe is used to refine entry and exit areas (`58:37–1:01:08`), not an exact trigger.
 
 ## Privacy
 
